@@ -3,423 +3,155 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Joseph Hughes - Selected Works</title>
-
-<!-- ============================================================= -->
-<!--  HOW TO USE                                                    -->
-<!--  1. Put your image files in an "images" folder next to this    -->
-<!--     file, named 1.jpg, 2.jpg, 3.jpg, 4.jpg, 5.jpg              -->
-<!--     (any web format works: .jpg .png .webp — update src below) -->
-<!--  2. Edit the WORKS list in the <script> at the bottom:         -->
-<!--     title / year / materials / dimensions / context / src      -->
-<!--  3. Add or remove items freely — the rotation adapts.          -->
-<!--  4. Change SITE_NAME and INTERVAL_MS below to taste.           -->
-<!-- ============================================================= -->
-
+<meta name="description" content="Joseph Hughes — Amsterdam-based post-disciplinary artist working across sculpture, objects, installation, film and publishing.">
+<title>Joseph Hughes — Selected Works</title>
 <style>
-  :root{
-    --ink:#ffffff;              /* caption text colour            */
-    --interval-fade:1.5s;       /* cube turn duration (CSS)       */
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  html,body{height:100%;background:#0a0a0a;overflow:hidden;
-    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
-    -webkit-font-smoothing:antialiased}
-
-  /* ---- 3D stage ---------------------------------------------- */
-  #scene{position:fixed;inset:0;perspective:1400px;overflow:hidden;background:#0a0a0a}
-  #cube{position:absolute;inset:0;transform-style:preserve-3d;
-    transition:transform var(--interval-fade) cubic-bezier(.66,0,.34,1);
-    will-change:transform}
-  .face{position:absolute;inset:0;overflow:hidden;backface-visibility:hidden}
-  .face img{position:absolute;inset:0;width:100%;height:100%;
-    object-fit:cover;display:block}
-
-  /* graceful placeholder shown until/if an image is missing ----- */
-  .face .placeholder{position:absolute;inset:0;display:flex;
-    align-items:center;justify-content:center;text-align:center;
-    color:rgba(255,255,255,.85);font-size:14px;letter-spacing:.18em;
-    text-transform:uppercase;padding:2rem}
-
-  /* ---- Caption (corner, no scrim, strong shadow) ------------- */
-  .caption{position:absolute;left:clamp(20px,4vw,60px);
-    bottom:clamp(20px,5vh,60px);max-width:min(560px,80vw);
-    color:var(--ink);z-index:5;pointer-events:none;
-    text-shadow:0 1px 3px rgba(0,0,0,.65),0 2px 14px rgba(0,0,0,.55),0 0 1px rgba(0,0,0,.9);
-    opacity:0;transform:translateY(10px);
-    transition:opacity .6s ease .25s,transform .6s ease .25s}
-  .caption.show{opacity:1;transform:none}
-  .caption .title{font-style:italic;font-weight:400;
-    font-size:clamp(22px,3.4vw,40px);line-height:1.05;letter-spacing:.01em}
-  .caption .title .year{font-style:normal;opacity:.85}
-  .caption .meta{margin-top:.55em;font-size:clamp(12px,1.25vw,15px);
-    line-height:1.5;letter-spacing:.02em;font-weight:300}
-  .caption .meta .dims{opacity:.8}
-  .caption .context{margin-top:.45em;font-size:clamp(11px,1.1vw,13px);
-    line-height:1.45;opacity:.75;font-weight:300}
-
-  /* ---- Fixed site chrome ------------------------------------- */
-  .site-name{position:absolute;top:clamp(18px,4vh,44px);
-    left:clamp(20px,4vw,60px);z-index:7;color:var(--ink);
-    font-size:clamp(13px,1.4vw,17px);letter-spacing:.28em;
-    text-transform:uppercase;font-weight:500;cursor:pointer;
-    text-shadow:0 1px 3px rgba(0,0,0,.6),0 0 14px rgba(0,0,0,.5)}
-  .site-name::after{content:"";display:block;height:1px;margin-top:5px;
-    background:var(--ink);transform:scaleX(0);transform-origin:left;
-    transition:transform .35s ease;opacity:.8}
-  .site-name:hover::after{transform:scaleX(1)}
-  .site-name .about-tag{font-size:.72em;opacity:.6;margin-left:.9em;letter-spacing:.2em}
-  .counter{position:absolute;bottom:clamp(20px,5vh,60px);
-    right:clamp(20px,4vw,60px);z-index:6;color:var(--ink);
-    font-size:clamp(12px,1.2vw,14px);letter-spacing:.15em;font-weight:300;
-    text-shadow:0 1px 3px rgba(0,0,0,.6)}
-  .counter b{font-weight:500}
-
-  /* ---- Controls (subtle, appear on hover) -------------------- */
-  .hint{position:absolute;top:clamp(18px,4vh,44px);
-    right:clamp(20px,4vw,60px);z-index:6;color:var(--ink);opacity:.0;
-    font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:300;
-    text-shadow:0 1px 3px rgba(0,0,0,.6);transition:opacity .4s}
-  #scene:hover .hint{opacity:.55}
-
-  /* ---- About panel (splashes up from the bottom) ------------- */
-  #about{position:fixed;inset:0;z-index:20;
-    background:rgba(10,10,10,.97);color:#f2f2f2;
-    transform:translateY(100%);transition:transform .6s cubic-bezier(.55,0,.2,1);
-    overflow-y:auto;visibility:hidden}
-  #about.open{transform:translateY(0);visibility:visible}
-  .about-inner{max-width:1100px;margin:0 auto;
-    min-height:100%;display:flex;align-items:center;gap:clamp(28px,5vw,72px);
-    padding:clamp(70px,10vh,120px) clamp(24px,6vw,72px);
-    flex-wrap:wrap}
-  .about-portrait{flex:1 1 300px;max-width:420px}
-  .about-portrait img{width:100%;height:auto;display:block;border-radius:2px}
-  .about-portrait .ph{width:100%;aspect-ratio:4/5;display:flex;
-    align-items:center;justify-content:center;text-align:center;
-    background:linear-gradient(135deg,#2a2a2a,#141414);
-    color:#888;font-size:12px;letter-spacing:.15em;text-transform:uppercase;padding:1.5rem}
-  .about-text{flex:1 1 360px}
-  .about-text h2{font-weight:400;font-size:clamp(24px,3vw,34px);
-    letter-spacing:.02em;margin-bottom:.7em}
-  .about-text p{font-size:clamp(14px,1.35vw,17px);line-height:1.65;
-    font-weight:300;margin-bottom:1em;max-width:52ch;color:#dcdcdc}
-  .about-cv{display:inline-block;margin-top:.6em;padding:.7em 1.4em;
-    border:1px solid rgba(255,255,255,.4);color:#fff;text-decoration:none;
-    font-size:13px;letter-spacing:.15em;text-transform:uppercase;
-    transition:background .25s,color .25s}
-  .about-cv:hover{background:#fff;color:#0a0a0a}
-  .about-close{position:fixed;top:clamp(18px,4vh,40px);right:clamp(20px,4vw,48px);
-    z-index:21;width:42px;height:42px;border:none;background:none;cursor:pointer;
-    color:#fff;font-size:30px;line-height:1;opacity:.75;transition:opacity .2s}
-  .about-close:hover{opacity:1}
-
-  @media (prefers-reduced-motion: reduce){
-    #cube{transition:none}
-    #about{transition:none}
-  }
+:root{--ink:#fff;--interval-fade:1.25s}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:#0a0a0a;overflow:hidden;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+#scene{position:fixed;inset:0;perspective:1400px;overflow:hidden;background:#0a0a0a}
+#cube{position:absolute;inset:0;transform-style:preserve-3d;transition:transform var(--interval-fade) cubic-bezier(.66,0,.34,1);will-change:transform}
+.face{position:absolute;inset:0;overflow:hidden;backface-visibility:hidden;background:#0a0a0a}
+.face img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.face .placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;color:rgba(255,255,255,.85);font-size:14px;letter-spacing:.18em;text-transform:uppercase;padding:2rem}
+.caption{position:absolute;left:clamp(20px,4vw,60px);bottom:clamp(20px,5vh,60px);max-width:min(590px,82vw);color:var(--ink);z-index:5;pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.7),0 2px 16px rgba(0,0,0,.65),0 0 1px #000;opacity:0;transform:translateY(10px);transition:opacity .5s ease .18s,transform .5s ease .18s}
+.caption.show{opacity:1;transform:none}
+.caption .title{font-style:italic;font-weight:400;font-size:clamp(22px,3.4vw,40px);line-height:1.05}
+.caption .title .year{font-style:normal;opacity:.85}
+.caption .meta{margin-top:.55em;font-size:clamp(12px,1.25vw,15px);line-height:1.5;font-weight:300}
+.caption .context{margin-top:.45em;font-size:clamp(11px,1.1vw,13px);line-height:1.45;opacity:.8;font-weight:300}
+.site-name{position:absolute;top:clamp(18px,4vh,44px);left:clamp(20px,4vw,60px);z-index:7;color:#fff;font-size:clamp(13px,1.4vw,17px);letter-spacing:.24em;text-transform:uppercase;font-weight:500;cursor:pointer;text-shadow:0 1px 3px rgba(0,0,0,.65),0 0 14px rgba(0,0,0,.55)}
+.site-name .about-tag{font-size:.72em;opacity:.62;margin-left:.9em;letter-spacing:.18em}
+.counter{position:absolute;bottom:clamp(20px,5vh,60px);right:clamp(20px,4vw,60px);z-index:6;color:#fff;font-size:clamp(12px,1.2vw,14px);letter-spacing:.15em;text-shadow:0 1px 3px rgba(0,0,0,.7)}
+.hint{position:absolute;top:clamp(18px,4vh,44px);right:clamp(20px,4vw,60px);z-index:6;color:#fff;opacity:0;font-size:11px;letter-spacing:.14em;text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.7);transition:opacity .35s}
+#scene:hover .hint{opacity:.55}
+#about{position:fixed;inset:0;z-index:20;background:rgba(10,10,10,.985);color:#f2f2f2;transform:translateY(100%);transition:transform .55s cubic-bezier(.55,0,.2,1);overflow-y:auto;visibility:hidden}
+#about.open{transform:translateY(0);visibility:visible}
+.about-inner{max-width:1180px;margin:0 auto;min-height:100%;display:grid;grid-template-columns:minmax(260px,420px) 1fr;gap:clamp(34px,6vw,84px);padding:clamp(74px,10vh,118px) clamp(24px,6vw,74px)}
+.about-portrait img{width:100%;height:auto;display:block}
+.about-text h2{font-weight:400;font-size:clamp(25px,3vw,36px);margin-bottom:.7em}
+.about-text p{font-size:clamp(14px,1.3vw,17px);line-height:1.62;font-weight:300;margin-bottom:1em;max-width:58ch;color:#ddd}
+.about-text h3{font-size:13px;letter-spacing:.15em;text-transform:uppercase;font-weight:500;margin:2.2em 0 .75em}
+.about-list{font-size:clamp(13px,1.15vw,15px);line-height:1.65;color:#d7d7d7;font-weight:300}
+.about-list div{margin-bottom:.18em}
+.about-contact{display:flex;gap:18px;flex-wrap:wrap;margin-top:2em}
+.about-contact a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.38);padding-bottom:2px;font-size:13px;letter-spacing:.08em}
+.about-close{position:fixed;top:clamp(18px,4vh,40px);right:clamp(20px,4vw,48px);z-index:21;width:42px;height:42px;border:none;background:none;cursor:pointer;color:#fff;font-size:30px;opacity:.75}
+@media(max-width:700px){
+  .face img{object-fit:cover}
+  .hint{display:none}
+  .caption{max-width:78vw}
+  .caption .meta,.caption .context{display:none}
+  .about-inner{display:block;padding-top:86px}
+  .about-portrait{max-width:320px;margin-bottom:32px}
+  .site-name{letter-spacing:.18em}
+}
+@media(prefers-reduced-motion:reduce){#cube,#about{transition:none}}
 </style>
 </head>
 <body>
-
 <div id="scene">
   <div id="cube">
-    <div class="face" id="faceA">
-      <img alt="">
-      <div class="placeholder"></div>
-      <div class="caption"></div>
-    </div>
-    <div class="face" id="faceB">
-      <img alt="">
-      <div class="placeholder"></div>
-      <div class="caption"></div>
-    </div>
+    <div class="face" id="faceA"><img alt=""><div class="placeholder"></div><div class="caption"></div></div>
+    <div class="face" id="faceB"><img alt=""><div class="placeholder"></div><div class="caption"></div></div>
   </div>
-
-  <div class="site-name" id="siteName" role="button" tabindex="0">Artist Name<span class="about-tag">About</span></div>
-  <div class="hint">Click left / right to browse&nbsp;&nbsp;·&nbsp;&nbsp;Space to pause</div>
-  <div class="counter"><b id="cNow">01</b>&nbsp;/&nbsp;<span id="cTot">05</span></div>
+  <div class="site-name" id="siteName" role="button" tabindex="0">Joseph Hughes<span class="about-tag">About</span></div>
+  <div class="hint">Click left / right to browse · Space to pause</div>
+  <div class="counter"><b id="cNow">01</b> / <span id="cTot">12</span></div>
 </div>
 
-<!-- ABOUT panel -->
 <section id="about" aria-hidden="true">
-  <button class="about-close" id="aboutClose" aria-label="Close">&times;</button>
-  <div class="about-inner">
-    <div class="about-portrait" id="aboutPortrait"></div>
-    <div class="about-text">
-      <h2 id="aboutHeading">About</h2>
-      <div id="aboutBio"></div>
-      <a class="about-cv" id="aboutCv" href="#" download style="display:none">Download CV (PDF)</a>
+<button class="about-close" id="aboutClose" aria-label="Close">&times;</button>
+<div class="about-inner">
+  <div class="about-portrait"><img src="images/portrait.jpg" alt="Joseph Hughes"></div>
+  <div class="about-text">
+    <h2>Joseph Hughes</h2>
+    <p>Joseph Hughes is an Amsterdam-based post-disciplinary artist working across sculpture, objects, installation, film and publishing. Rooted in bricolage and assemblage, his practice draws on everyday products, found materials, functional forms and cultural symbols.</p>
+    <p>He recombines familiar things until their logic begins to unravel, creating works that sit between usefulness and uselessness, sincerity and absurdity. With his tongue firmly in cheek, Hughes uses material contradiction, visual puns and disrupted function to question authenticity, value, authorship and the authority embedded in design.</p>
+    <h3>Selected exhibitions</h3>
+    <div class="about-list">
+      <div>2025 — <em>Kissambushed</em>, Gallery van Fanny Freytag, Amsterdam</div>
+      <div>2025 — <em>Everybody Wants to Rule the World</em>, Gallery Vriend van Bavink, Amsterdam</div>
+      <div>2025 — This Art Fair, Amsterdam</div>
+      <div>2025 — <em>Love Letters</em>, Punt WG, Amsterdam</div>
+      <div>2024 — Dead Darlings #19, PAKT Foundation, Amsterdam</div>
+      <div>2023 — <em>It’s The Thought That Counts…</em>, solo exhibition, De Bouwput, Amsterdam</div>
+      <div>2023 — AGA LABS Artist in Residence, Amsterdam</div>
+      <div>2021 — This Art Fair, Amsterdam</div>
+      <div>2021 — <em>Love for Sale</em>, W139, Amsterdam</div>
+      <div>2016 — Art Rotterdam, Rotterdam</div>
+      <div>2015 — Kunsthal Rotterdam, Rotterdam</div>
+      <div>2014 — V2_ Institute for the Unstable Media, Artist in Residence, Rotterdam</div>
+    </div>
+    <h3>Selected support</h3>
+    <div class="about-list">
+      <div>Fonds Kwadraat — 2021, 2023</div>
+      <div>Amsterdams Fonds voor de Kunst — 2022</div>
+      <div>Stichting Stokroos — 2022</div>
+      <div>Droom en Daad Foundation — 2021</div>
+    </div>
+    <div class="about-contact">
+      <a href="mailto:hughes.joseph86@gmail.com">Email</a>
+      <a href="https://www.instagram.com/hughesjoseph/" target="_blank" rel="noopener">Instagram</a>
+      <span style="font-size:13px;opacity:.68">Full CV available on request.</span>
     </div>
   </div>
+</div>
 </section>
 
 <script>
-/* =================================================================
-   EDIT EVERYTHING BELOW THIS LINE
-   ================================================================= */
-
-const SITE_NAME  = "Artist Name";   // shown top-left (click it to open About)
-const INTERVAL_MS = 3000;           // time each image is held (ms)
-
-// ---- ABOUT panel content ----------------------------------------
-// Clicking your name (top-left) splashes this up.
-const ABOUT = {
-  heading:  "Info",
-  portrait: "images/portrait.jpg",   // a photo of you (portrait/4:5 works best)
-  // Each string below becomes its own paragraph. Add or remove freely.
-  bio: [
-    "Write your bio here. This first paragraph might cover your practice, the ideas or materials you work with, and where you're based.",
-    "A second paragraph can add exhibition history, education, awards, or a short statement. Keep it as long or short as you like."
-  ],
-  // CV download — leave cv:\"\" to hide the button. To add later, drop a PDF in
-  // a \"files\" folder and set cv: \"files/cv.pdf\".
-  cv: "",
-  cvLabel: "Download CV (PDF)"
-};
-
-// One object per work. Add / remove freely.
-// Leave any field as "" to hide it.
-const WORKS = [
-  {
-    src:        "images/1.jpg",
-    title:      "Untitled (Beaded Curtain)",
-    year:       "2024",
-    materials:  "Cast acrylic beads, steel jump rings",
-    dimensions: "300 × 240 × 12 cm",
-    context:    "Installation view, Gallery Name, City"
-  },
-  {
-    src:        "images/2.jpg",
-    title:      "CMYK Threshold",
-    year:       "2024",
-    materials:  "Injection-moulded plastic, aluminium rail",
-    dimensions: "Dimensions variable",
-    context:    "Detail"
-  },
-  {
-    src:        "images/3.jpg",
-    title:      "Escalator (Loop)",
-    year:       "2023",
-    materials:  "3-channel video, Sony Trinitron monitors, flight cases",
-    dimensions: "Duration 4′12″, looped",
-    context:    "Installation view, Group Show, City"
-  },
-  {
-    src:        "images/4.jpg",
-    title:      "Standards",
-    year:       "2023",
-    materials:  "Dye-sublimation print on flag fabric, ash poles",
-    dimensions: "180 × 90 cm each, set of 4",
-    context:    "Studio view"
-  },
-  {
-    src:        "images/5.jpg",
-    title:      "Roadworks (Icosahedron)",
-    year:       "2022",
-    materials:  "Reclaimed traffic signage, powder-coated steel",
-    dimensions: "Ø 120 cm",
-    context:    "Public installation, City"
-  }
+const INTERVAL_MS=4500;
+const MOBILE_QUERY='(max-width:700px)';
+const WORKS=[
+{desktopSrc:'images/hairy-styles-desktop.jpg',mobileSrc:'images/hairy-styles-mobile.jpg',title:'Hairy Styles',year:'2026',materials:'Photographic self-portrait series and modular artist publication',dimensions:'In development',context:'Identity, hair loss, transformation and reader authorship'},
+{desktopSrc:'images/solo-desktop.jpg',mobileSrc:'images/solo-mobile.jpg',title:'It’s The Thought That Counts…',year:'2023',materials:'Solo exhibition: sculpture, assemblage, installation and film',dimensions:'',context:'De Bouwput, Amsterdam'},
+{desktopSrc:'images/wip-desktop.jpg',mobileSrc:'images/wip-mobile.jpg',title:'Work in Progress',year:'2023',materials:'Borrowed and reclaimed road signs, fixings',dimensions:'Dimensions variable',context:'Sculptural assemblage and public intervention'},
+{desktopSrc:'images/pearls-desktop.jpg',mobileSrc:'images/pearls-mobile.jpg',title:'String of Pearls',year:'2025',materials:'Coloured bead chains, aluminium housing and fixings',dimensions:'Installation variable',context:'Kissambushed, Gallery van Fanny Freytag, Amsterdam'},
+{desktopSrc:'images/basketballs-desktop.jpg',mobileSrc:'images/basketballs-mobile.jpg',title:'A Mimicry to Memory®',year:'2021',materials:'Terracotta basketball casts',dimensions:'Life-size, installation variable',context:'Sculpture and installation'},
+{desktopSrc:'images/slinky-desktop.jpg',mobileSrc:'images/slinky-mobile.jpg',title:'Perpetual Progression',year:'2014',materials:'Video installation, CRT monitors and flight cases',dimensions:'Looped video',context:'A rainbow Slinky descends an escalator indefinitely'},
+{desktopSrc:'images/paris-desktop.jpg',mobileSrc:'images/paris-mobile.jpg',title:'Paris in the Spring',year:'2023',materials:'Engraved marble and printed triangular units',dimensions:'Variable installation',context:'A familiar reading error made permanent'},
+{desktopSrc:'images/biotoop-desktop.jpg',mobileSrc:'images/biotoop-mobile.jpg',title:'Untitled (Tree / Plane)',year:'2022',materials:'Painted timber panel and existing tree',dimensions:'Site-specific',context:'Biotoop, Amstelveen'},
+{desktopSrc:'images/pickets-desktop.jpg',mobileSrc:'images/pickets-mobile.jpg',title:'Picket Boards',year:'2016',materials:'Printed placards',dimensions:'Series',context:'Art Rotterdam, with Studio Folkert de Jong and 75B'},
+{desktopSrc:'images/mirror-desktop.jpg',mobileSrc:'images/mirror-mobile.jpg',title:'7 Years Good Luck',year:'',materials:'Altered circular mirror',dimensions:'Dimensions TBC',context:'Studio installation'},
+{desktopSrc:'images/teapot-desktop.jpg',mobileSrc:'images/teapot-mobile.jpg',title:'Utah Teapot',year:'',materials:'Porcelain teapot and Sugru',dimensions:'Dimensions TBC',context:'Altered object'},
+{desktopSrc:'images/kissambushed-desktop.jpg',mobileSrc:'images/kissambushed-mobile.jpg',title:'Kissambushed',year:'2025',materials:'Group exhibition',dimensions:'',context:'Gallery van Fanny Freytag, Amsterdam'}
 ];
 
-/* =================================================================
-   ENGINE — you shouldn't need to edit below here
-   ================================================================= */
-
-const scene = document.getElementById('scene');
-const cube  = document.getElementById('cube');
-const faces = [document.getElementById('faceA'), document.getElementById('faceB')];
-const siteNameEl = document.getElementById('siteName');
-siteNameEl.firstChild.textContent = SITE_NAME;   // keep the "About" tag span
-document.title = SITE_NAME + " — Works";
-document.getElementById('cTot').textContent = String(WORKS.length).padStart(2,'0');
-
-let depth = window.innerWidth / 2;    // half of a face's width (horizontal turn)
-let rot = 0;                          // current cube rotation (deg)
-let cur = 0;                          // which face element is at the front
-let idx = 0;                          // index into WORKS shown at the front
-let timer = null;
-let paused = false;
-
-// Fill a face element with a work's image + caption.
-function paintFace(faceEl, work){
-  const img = faceEl.querySelector('img');
-  const ph  = faceEl.querySelector('.placeholder');
-  const cap = faceEl.querySelector('.caption');
-
-  ph.style.display = 'flex';
-  ph.style.background = placeholderBg(work);
-  ph.textContent = (work.title || 'Image') + '  ·  ' + work.src;
-
-  img.style.opacity = 0;
-  img.onload  = () => { img.style.opacity = 1; ph.style.display = 'none'; };
-  img.onerror = () => { img.style.opacity = 0; ph.style.display = 'flex'; };
-  img.alt = work.title || '';
-  img.src = work.src;
-
-  // caption
-  const parts = [];
-  if (work.title) parts.push(
-    `<div class="title">${esc(work.title)}${work.year ? ` <span class="year">${esc(work.year)}</span>`:''}</div>`);
-  const metaLine = [work.materials, work.dimensions].filter(Boolean);
-  if (metaLine.length) parts.push(
-    `<div class="meta">${work.materials?esc(work.materials):''}${(work.materials&&work.dimensions)?'<br>':''}${work.dimensions?`<span class="dims">${esc(work.dimensions)}</span>`:''}</div>`);
-  if (work.context) parts.push(`<div class="context">${esc(work.context)}</div>`);
-  cap.innerHTML = parts.join('');
-  cap.classList.remove('show');
-  // reveal caption once this face is at the front
-  requestAnimationFrame(()=>requestAnimationFrame(()=>cap.classList.add('show')));
+const scene=document.getElementById('scene'),cube=document.getElementById('cube');
+const faces=[document.getElementById('faceA'),document.getElementById('faceB')];
+document.getElementById('cTot').textContent=String(WORKS.length).padStart(2,'0');
+let depth=innerWidth/2,rot=0,cur=0,idx=0,timer=null,paused=false;
+const isMobile=()=>matchMedia(MOBILE_QUERY).matches;
+const srcFor=w=>isMobile()?(w.mobileSrc||w.desktopSrc):w.desktopSrc;
+const esc=s=>String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function paintFace(face,w){
+ const img=face.querySelector('img'),ph=face.querySelector('.placeholder'),cap=face.querySelector('.caption');
+ ph.style.display='flex';ph.textContent=w.title||'Image';img.style.opacity=0;
+ img.onload=()=>{img.style.opacity=1;ph.style.display='none'};img.onerror=()=>{ph.style.display='flex'};
+ img.alt=w.title||'';img.src=srcFor(w);
+ let x=`<div class="title">${esc(w.title)}${w.year?` <span class="year">${esc(w.year)}</span>`:''}</div>`;
+ if(w.materials||w.dimensions)x+=`<div class="meta">${esc(w.materials)}${w.materials&&w.dimensions?'<br>':''}<span>${esc(w.dimensions)}</span></div>`;
+ if(w.context)x+=`<div class="context">${esc(w.context)}</div>`;
+ cap.innerHTML=x;cap.classList.remove('show');requestAnimationFrame(()=>requestAnimationFrame(()=>cap.classList.add('show')));
 }
-
-function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
-
-// deterministic soft gradient per work, so missing images still look intentional
-function placeholderBg(work){
-  let h=0; const s=(work.src||'')+ (work.title||'');
-  for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))%360;
-  return `linear-gradient(135deg,hsl(${h} 45% 22%),hsl(${(h+40)%360} 40% 12%))`;
-}
-
-// Position a face at a given local angle so it sits on a cube side.
-function placeFace(faceEl, localDeg){
-  faceEl.style.transform = `rotateY(${localDeg}deg) translateZ(${depth}px)`;
-}
-
-function applyCube(animated){
-  cube.style.transition = animated ? '' : 'none';
-  cube.style.transform = `translateZ(${-depth}px) rotateY(${rot}deg)`;
-  if(!animated){ // force reflow then restore transition
-    void cube.offsetWidth;
-    cube.style.transition = '';
-  }
-}
-
-// initialise
-function init(){
-  depth = window.innerWidth/2;
-  idx = 0; rot = 0; cur = 0;
-  paintFace(faces[0], WORKS[0]);
-  placeFace(faces[0], 0);
-  // pre-stage the second face just above (out of view)
-  paintFace(faces[1], WORKS[1 % WORKS.length]);
-  faces[1].querySelector('.caption').classList.remove('show');
-  placeFace(faces[1], -rot + 90);
-  applyCube(false);
-  updateCounter();
-}
-
-function updateCounter(){
-  document.getElementById('cNow').textContent = String(idx+1).padStart(2,'0');
-}
-
-// advance to next (dir = +1) or previous (dir = -1)
-function go(dir){
-  const incoming = 1 - cur;
-  idx = (idx + dir + WORKS.length) % WORKS.length;
-
-  paintFace(faces[incoming], WORKS[idx]);
-  // place incoming face 90° ahead so it tumbles into view
-  const nextRot = rot - 90*dir;
-  faces[incoming].style.transform =
-    `rotateY(${-nextRot}deg) translateZ(${depth}px)`;
-  faces[incoming].querySelector('.caption').classList.remove('show');
-
-  // hide outgoing caption
-  faces[cur].querySelector('.caption').classList.remove('show');
-
-  // force the incoming placement to register before rotating the cube
-  void cube.offsetWidth;
-
-  rot = nextRot;
-  applyCube(true);
-  cur = incoming;
-  updateCounter();
-}
-
-// timing
-function schedule(){
-  clearInterval(timer);
-  if(paused) return;
-  timer = setInterval(()=>go(1), INTERVAL_MS);
-}
-
-// interactions
-function pauseToggle(){
-  paused = !paused;
-  if(paused) clearInterval(timer); else schedule();
-}
-// Click the left half of the screen = previous, right half = next.
-scene.addEventListener('click', (e)=>{
-  const dir = (e.clientX < window.innerWidth/2) ? -1 : 1;
-  go(dir);
-  schedule();               // restart the 3s timer after a manual move
-});
-document.addEventListener('keydown', (e)=>{
-  if(document.getElementById('about').classList.contains('open')) return;
-  if(e.code==='Space'){ e.preventDefault(); pauseToggle(); }
-  else if(e.code==='ArrowRight'){ go(1); schedule(); }
-  else if(e.code==='ArrowLeft'){ go(-1); schedule(); }
-});
-scene.addEventListener('mouseenter', ()=>{ if(!paused){ clearInterval(timer);} });
-scene.addEventListener('mouseleave', ()=>{ if(!paused){ schedule(); } });
-
-window.addEventListener('resize', ()=>{
-  depth = window.innerWidth/2;
-  // re-place both faces + cube for the new size (no animation)
-  placeFace(faces[cur], -rot);
-  placeFace(faces[1-cur], -rot + 90);
-  applyCube(false);
-});
-
-/* ---- About panel ------------------------------------------------ */
-const aboutEl = document.getElementById('about');
-let aboutWasPaused = false;
-
-(function buildAbout(){
-  document.getElementById('aboutHeading').textContent = ABOUT.heading || 'About';
-  // portrait
-  const pWrap = document.getElementById('aboutPortrait');
-  if(ABOUT.portrait){
-    const im = new Image();
-    im.alt = SITE_NAME;
-    im.onerror = ()=>{ pWrap.innerHTML = `<div class="ph">Portrait — ${esc(ABOUT.portrait)}</div>`; };
-    im.onload  = ()=>{ pWrap.innerHTML=''; pWrap.appendChild(im); };
-    im.src = ABOUT.portrait;
-    pWrap.innerHTML = `<div class="ph">Portrait — ${esc(ABOUT.portrait)}</div>`;
-  }
-  // bio
-  document.getElementById('aboutBio').innerHTML =
-    (ABOUT.bio||[]).map(p=>`<p>${esc(p)}</p>`).join('');
-  // cv
-  const cv = document.getElementById('aboutCv');
-  if(ABOUT.cv){ cv.href = ABOUT.cv; cv.textContent = ABOUT.cvLabel || 'Download CV';
-    cv.style.display='inline-block'; } else { cv.style.display='none'; }
-})();
-
-function openAbout(){
-  aboutWasPaused = paused;
-  clearInterval(timer);              // hold the rotation while reading
-  aboutEl.classList.add('open');
-  aboutEl.setAttribute('aria-hidden','false');
-}
-function closeAbout(){
-  aboutEl.classList.remove('open');
-  aboutEl.setAttribute('aria-hidden','true');
-  if(!aboutWasPaused) schedule();    // resume if it was running before
-}
-siteNameEl.addEventListener('click', (e)=>{ e.stopPropagation(); openAbout(); });
-siteNameEl.addEventListener('keydown', (e)=>{
-  if(e.code==='Enter'||e.code==='Space'){ e.preventDefault(); openAbout(); }
-});
-document.getElementById('aboutClose').addEventListener('click', closeAbout);
-aboutEl.addEventListener('click', (e)=>{ if(e.target===aboutEl) closeAbout(); });
-document.addEventListener('keydown', (e)=>{
-  if(e.code==='Escape' && aboutEl.classList.contains('open')) closeAbout();
-});
-
-// go
-init();
-schedule();
+function placeFace(f,d){f.style.transform=`rotateY(${d}deg) translateZ(${depth}px)`}
+function applyCube(a){cube.style.transition=a?'':'none';cube.style.transform=`translateZ(${-depth}px) rotateY(${rot}deg)`;if(!a){void cube.offsetWidth;cube.style.transition=''}}
+function updateCounter(){document.getElementById('cNow').textContent=String(idx+1).padStart(2,'0')}
+function init(){depth=innerWidth/2;idx=0;rot=0;cur=0;paintFace(faces[0],WORKS[0]);placeFace(faces[0],0);paintFace(faces[1],WORKS[1]);placeFace(faces[1],90);applyCube(false);updateCounter()}
+function go(dir){const incoming=1-cur;idx=(idx+dir+WORKS.length)%WORKS.length;paintFace(faces[incoming],WORKS[idx]);const nextRot=rot-90*dir;faces[incoming].style.transform=`rotateY(${-nextRot}deg) translateZ(${depth}px)`;faces[cur].querySelector('.caption').classList.remove('show');void cube.offsetWidth;rot=nextRot;applyCube(true);cur=incoming;updateCounter()}
+function schedule(){clearInterval(timer);if(!paused)timer=setInterval(()=>go(1),INTERVAL_MS)}
+scene.addEventListener('click',e=>{go(e.clientX<innerWidth/2?-1:1);schedule()});
+document.addEventListener('keydown',e=>{if(document.getElementById('about').classList.contains('open'))return;if(e.code==='Space'){e.preventDefault();paused=!paused;schedule()}if(e.code==='ArrowRight'){go(1);schedule()}if(e.code==='ArrowLeft'){go(-1);schedule()}});
+scene.addEventListener('mouseenter',()=>clearInterval(timer));scene.addEventListener('mouseleave',schedule);
+addEventListener('resize',()=>{depth=innerWidth/2;placeFace(faces[cur],-rot);placeFace(faces[1-cur],-rot+90);paintFace(faces[cur],WORKS[idx]);applyCube(false)});
+const about=document.getElementById('about');
+function openAbout(){clearInterval(timer);about.classList.add('open');about.setAttribute('aria-hidden','false')}
+function closeAbout(){about.classList.remove('open');about.setAttribute('aria-hidden','true');schedule()}
+document.getElementById('siteName').addEventListener('click',e=>{e.stopPropagation();openAbout()});
+document.getElementById('aboutClose').addEventListener('click',closeAbout);
+about.addEventListener('click',e=>{if(e.target===about)closeAbout()});
+document.addEventListener('keydown',e=>{if(e.code==='Escape'&&about.classList.contains('open'))closeAbout()});
+init();schedule();
 </script>
 </body>
 </html>
