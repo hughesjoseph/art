@@ -254,7 +254,7 @@ const ytId=u=>{if(!u)return'';if(/^[\w-]{11}$/.test(u))return u;const m=String(u
 
 function paintFace(face,w){
   const img=face.querySelector('img'),ph=face.querySelector('.placeholder'),cap=face.querySelector('.caption');
-  img.style.objectPosition=w.objectPosition||'center';img.style.objectFit=w.fit||'contain';
+  img.style.objectPosition=w.objectPosition||'center';img.style.objectFit=w.fit||'cover';
   ph.style.display='flex';ph.textContent=w.title||'Image';img.style.opacity=0;
   img.onload=()=>{img.style.opacity=1;ph.style.display='none'};img.onerror=()=>{ph.style.display='flex'};
   img.alt=w.title||'';img.src=srcFor(w);
