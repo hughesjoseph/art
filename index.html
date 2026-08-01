@@ -12,41 +12,71 @@ html,body{height:100%;background:#0a0a0a;overflow:hidden;font-family:"Helvetica 
 #scene{position:fixed;inset:0;perspective:1400px;overflow:hidden;background:#0a0a0a}
 #cube{position:absolute;inset:0;transform-style:preserve-3d;transition:transform var(--interval-fade) cubic-bezier(.66,0,.34,1);will-change:transform}
 .face{position:absolute;inset:0;overflow:hidden;backface-visibility:hidden;background:#0a0a0a}
-.face img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.face .placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;color:rgba(255,255,255,.85);font-size:14px;letter-spacing:.18em;text-transform:uppercase;padding:2rem}
-.caption{position:absolute;left:clamp(20px,4vw,60px);bottom:clamp(20px,5vh,60px);max-width:min(590px,82vw);color:var(--ink);z-index:5;pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.7),0 2px 16px rgba(0,0,0,.65),0 0 1px #000;opacity:0;transform:translateY(10px);transition:opacity .5s ease .18s,transform .5s ease .18s}
+/* full-bleed: fill the whole screen, crop as needed. Per-work focus can be
+   tuned by adding e.g. objectPosition:'center 30%' to a WORKS item. */
+.face img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;z-index:1}
+.face .placeholder{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;text-align:center;color:rgba(255,255,255,.85);font-size:14px;letter-spacing:.18em;text-transform:uppercase;padding:2rem}
+#scene.fademode #cube{transform:none!important;transition:none!important}
+#scene.fademode .face{transition:opacity 1.05s ease}
+.scrim{position:absolute;left:0;right:0;bottom:0;height:42%;z-index:4;pointer-events:none;background:linear-gradient(to top,rgba(0,0,0,.6),rgba(0,0,0,.16) 55%,transparent);transition:opacity .3s}
+.caption{position:absolute;left:clamp(20px,4vw,60px);bottom:clamp(20px,5vh,60px);max-width:min(600px,84vw);color:var(--ink);z-index:5;pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.75),0 2px 16px rgba(0,0,0,.7),0 0 1px #000;opacity:0;transform:translateY(10px);transition:opacity .5s ease .18s,transform .5s ease .18s}
 .caption.show{opacity:1;transform:none}
-.caption .title{font-style:italic;font-weight:400;font-size:clamp(22px,3.4vw,40px);line-height:1.05}
+.caption .title{font-style:italic;font-weight:400;font-size:clamp(21px,3.2vw,38px);line-height:1.06}
 .caption .title .year{font-style:normal;opacity:.85}
 .caption .meta{margin-top:.55em;font-size:clamp(12px,1.25vw,15px);line-height:1.5;font-weight:300}
-.caption .context{margin-top:.45em;font-size:clamp(11px,1.1vw,13px);line-height:1.45;opacity:.8;font-weight:300}
+.caption .context{margin-top:.45em;font-size:clamp(11px,1.1vw,13px);line-height:1.45;opacity:.82;font-weight:300}
 .site-name{position:absolute;top:clamp(18px,4vh,44px);left:clamp(20px,4vw,60px);z-index:7;color:#fff;font-size:clamp(13px,1.4vw,17px);letter-spacing:.24em;text-transform:uppercase;font-weight:500;cursor:pointer;text-shadow:0 1px 3px rgba(0,0,0,.65),0 0 14px rgba(0,0,0,.55)}
-.site-name .about-tag{font-size:.72em;opacity:.62;margin-left:.9em;letter-spacing:.18em}
+.topbar-right{position:absolute;top:clamp(16px,4vh,40px);right:clamp(20px,4vw,58px);z-index:7;display:flex;gap:18px;align-items:center}
+.iconbtn{background:none;border:none;cursor:pointer;color:#fff;padding:6px;line-height:0;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6));opacity:.9}
+.iconbtn:hover{opacity:1}
+.iconbtn svg{width:22px;height:22px;display:block}
 .counter{position:absolute;bottom:clamp(20px,5vh,60px);right:clamp(20px,4vw,60px);z-index:6;color:#fff;font-size:clamp(12px,1.2vw,14px);letter-spacing:.15em;text-shadow:0 1px 3px rgba(0,0,0,.7)}
-.hint{position:absolute;top:clamp(18px,4vh,44px);right:clamp(20px,4vw,60px);z-index:6;color:#fff;opacity:0;font-size:11px;letter-spacing:.14em;text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.7);transition:opacity .35s}
-#scene:hover .hint{opacity:.55}
+.hint{position:absolute;left:50%;bottom:clamp(18px,4vh,40px);transform:translateX(-50%);z-index:6;color:#fff;opacity:0;font-size:11px;letter-spacing:.14em;text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.7);transition:opacity .35s;pointer-events:none}
+#scene:hover .hint{opacity:.5}
+#videoLayer{position:absolute;inset:0;z-index:8;display:none;background:#000}
+#videoLayer.show{display:block}
+#videoLayer iframe{width:100%;height:100%;border:0;display:block}
+#videoBar{position:absolute;top:0;left:0;right:0;z-index:9;display:none;align-items:center;justify-content:space-between;gap:16px;padding:clamp(14px,3vh,22px) clamp(18px,4vw,40px);background:linear-gradient(to bottom,rgba(0,0,0,.65),transparent)}
+#scene.playing #videoBar{display:flex}
+#scene.playing .site-name,#scene.playing .topbar-right,#scene.playing .counter,#scene.playing .hint,#scene.playing .scrim,#scene.playing .caption{opacity:0;pointer-events:none}
+#videoBar .vt{color:#fff;font-style:italic;font-size:clamp(14px,1.7vw,19px);text-shadow:0 1px 3px rgba(0,0,0,.6)}
+#videoBar .vc{display:flex;gap:10px;flex-shrink:0}
+#videoBar button{background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.5);color:#fff;padding:8px 14px;cursor:pointer;font-size:12px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap}
+#videoBar button:hover{background:rgba(255,255,255,.15)}
 #about{position:fixed;inset:0;z-index:20;background:rgba(10,10,10,.985);color:#f2f2f2;transform:translateY(100%);transition:transform .55s cubic-bezier(.55,0,.2,1);overflow-y:auto;visibility:hidden}
 #about.open{transform:translateY(0);visibility:visible}
 .about-inner{max-width:1180px;margin:0 auto;min-height:100%;display:grid;grid-template-columns:minmax(260px,420px) 1fr;gap:clamp(34px,6vw,84px);padding:clamp(74px,10vh,118px) clamp(24px,6vw,74px)}
 .about-portrait img{width:100%;height:auto;display:block}
-.about-text h2{font-weight:400;font-size:clamp(25px,3vw,36px);margin-bottom:.7em}
+.about-text h2{font-weight:400;font-size:clamp(25px,3vw,36px);margin-bottom:.15em}
+.about-text .born{font-size:13px;letter-spacing:.04em;color:#9d9d9d;margin-bottom:1.4em}
 .about-text p{font-size:clamp(14px,1.3vw,17px);line-height:1.62;font-weight:300;margin-bottom:1em;max-width:58ch;color:#ddd}
 .about-text h3{font-size:13px;letter-spacing:.15em;text-transform:uppercase;font-weight:500;margin:2.2em 0 .75em}
 .about-list{font-size:clamp(13px,1.15vw,15px);line-height:1.65;color:#d7d7d7;font-weight:300}
 .about-list div{margin-bottom:.18em}
-.about-contact{display:flex;gap:18px;flex-wrap:wrap;margin-top:2em}
+.about-contact{display:flex;gap:18px;flex-wrap:wrap;align-items:center;margin-top:2em}
 .about-contact a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.38);padding-bottom:2px;font-size:13px;letter-spacing:.08em}
 .about-close{position:fixed;top:clamp(18px,4vh,40px);right:clamp(20px,4vw,48px);z-index:21;width:42px;height:42px;border:none;background:none;cursor:pointer;color:#fff;font-size:30px;opacity:.75}
+#index{position:fixed;inset:0;z-index:19;background:rgba(10,10,10,.985);color:#eee;transform:translateY(100%);transition:transform .5s cubic-bezier(.55,0,.2,1);overflow-y:auto;visibility:hidden}
+#index.open{transform:translateY(0);visibility:visible}
+.index-head{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:clamp(16px,4vh,28px) clamp(20px,5vw,54px);background:linear-gradient(to bottom,rgba(10,10,10,.98),rgba(10,10,10,.55));backdrop-filter:blur(3px);z-index:2}
+.index-head h2{font-weight:400;font-size:clamp(14px,1.6vw,18px);letter-spacing:.22em;text-transform:uppercase}
+.index-close{background:none;border:none;color:#fff;font-size:30px;cursor:pointer;opacity:.8;line-height:1}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;padding:6px clamp(20px,5vw,54px) clamp(40px,8vh,80px)}
+.cell{background:none;border:none;padding:0;cursor:pointer;text-align:left;color:#e8e8e8}
+.cell .thumb{position:relative;display:block;width:100%;aspect-ratio:4/3;overflow:hidden;background:#1a1a1a}
+.cell .thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease,opacity .3s;opacity:.92}
+.cell:hover .thumb img{transform:scale(1.04);opacity:1}
+.cell .pill{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.62);color:#fff;font-size:11px;letter-spacing:.1em;padding:4px 9px}
+.cell .lbl{display:block;font-style:italic;font-size:13px;letter-spacing:.02em;margin-top:9px;font-weight:300;color:#cfcfcf}
 @media(max-width:700px){
-  .face img{object-fit:cover}
   .hint{display:none}
-  .caption{max-width:78vw}
-  .caption .meta,.caption .context{display:none}
+  .caption{max-width:84vw}
   .about-inner{display:block;padding-top:86px}
   .about-portrait{max-width:320px;margin-bottom:32px}
   .site-name{letter-spacing:.18em}
+  .grid{grid-template-columns:repeat(2,1fr);gap:10px}
 }
-@media(prefers-reduced-motion:reduce){#cube,#about{transition:none}}
+@media(prefers-reduced-motion:reduce){#cube,#about,#index,#scene .face{transition:none}}
 </style>
 </head>
 <body>
@@ -55,17 +85,27 @@ html,body{height:100%;background:#0a0a0a;overflow:hidden;font-family:"Helvetica 
     <div class="face" id="faceA"><img alt=""><div class="placeholder"></div><div class="caption"></div></div>
     <div class="face" id="faceB"><img alt=""><div class="placeholder"></div><div class="caption"></div></div>
   </div>
-  <div class="site-name" id="siteName" role="button" tabindex="0">Joseph Hughes<span class="about-tag">About</span></div>
+  <div class="scrim"></div>
+  <div id="videoLayer"></div>
+  <div id="videoBar"><span class="vt" id="videoTitle"></span><span class="vc"><button id="videoNext">Next ›</button><button id="videoClose">Close ✕</button></span></div>
+  <div class="site-name" id="siteName" role="button" tabindex="0" title="About the artist">Joseph Hughes</div>
+  <div class="topbar-right">
+    <button class="iconbtn" id="indexBtn" aria-label="Works index" title="Works index">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    </button>
+  </div>
   <div class="hint">Click left / right to browse · Space to pause</div>
-  <div class="counter"><b id="cNow">01</b> / <span id="cTot">12</span></div>
+  <div class="counter"><b id="cNow">01</b> / <span id="cTot">20</span></div>
 </div>
 
+<!-- ABOUT (opens when you click the name) -->
 <section id="about" aria-hidden="true">
 <button class="about-close" id="aboutClose" aria-label="Close">&times;</button>
 <div class="about-inner">
   <div class="about-portrait"><img src="images/portrait.jpg" alt="Joseph Hughes"></div>
   <div class="about-text">
     <h2>Joseph Hughes</h2>
+    <div class="born">Born 1986, London. Lives and works in Amsterdam.</div>
     <p>Joseph Hughes is an Amsterdam-based post-disciplinary artist working across sculpture, objects, installation, film and publishing. Rooted in bricolage and assemblage, his practice draws on everyday products, found materials, functional forms and cultural symbols.</p>
     <p>He recombines familiar things until their logic begins to unravel, creating works that sit between usefulness and uselessness, sincerity and absurdity. With his tongue firmly in cheek, Hughes uses material contradiction, visual puns and disrupted function to question authenticity, value, authorship and the authority embedded in design.</p>
     <h3>Selected exhibitions</h3>
@@ -74,84 +114,243 @@ html,body{height:100%;background:#0a0a0a;overflow:hidden;font-family:"Helvetica 
       <div>2025 — <em>Everybody Wants to Rule the World</em>, Gallery Vriend van Bavink, Amsterdam</div>
       <div>2025 — This Art Fair, Amsterdam</div>
       <div>2025 — <em>Love Letters</em>, Punt WG, Amsterdam</div>
-      <div>2024 — Dead Darlings #19, PAKT Foundation, Amsterdam</div>
+      <div>2024 — Dead Darlings #19, Amsterdam</div>
+      <div>2024 — <em>Graphic Edition</em>, Nieuwe Instituut, Rotterdam</div>
       <div>2023 — <em>It’s The Thought That Counts…</em>, solo exhibition, De Bouwput, Amsterdam</div>
-      <div>2023 — AGA LABS Artist in Residence, Amsterdam</div>
-      <div>2021 — This Art Fair, Amsterdam</div>
+      <div>2023 — AGA LAB Artist in Residence, Amsterdam</div>
+      <div>2022 — <em>Biotoop</em>, Outside Art Route, Amstelveen</div>
       <div>2021 — <em>Love for Sale</em>, W139, Amsterdam</div>
-      <div>2016 — Art Rotterdam, Rotterdam</div>
-      <div>2015 — Kunsthal Rotterdam, Rotterdam</div>
+      <div>2016 — <em>Who Owns the Street?</em>, Van Abbemuseum, Eindhoven</div>
+      <div>2015 — Independent Curators International, Kunsthal Rotterdam</div>
       <div>2014 — V2_ Institute for the Unstable Media, Artist in Residence, Rotterdam</div>
     </div>
     <h3>Selected support</h3>
     <div class="about-list">
       <div>Fonds Kwadraat — 2021, 2023</div>
-      <div>Amsterdams Fonds voor de Kunst — 2022</div>
+      <div>Amsterdam Fund for the Arts (AFK) — 2022</div>
       <div>Stichting Stokroos — 2022</div>
       <div>Droom en Daad Foundation — 2021</div>
     </div>
-    <div class="about-contact">
+    <div class="about-contact" id="aboutContact">
       <a href="mailto:hughes.joseph86@gmail.com">Email</a>
       <a href="https://www.instagram.com/hughesjoseph/" target="_blank" rel="noopener">Instagram</a>
-      <span style="font-size:13px;opacity:.68">Full CV available on request.</span>
+      <span id="cvNote" style="font-size:13px;opacity:.68">Full CV available on request.</span>
     </div>
   </div>
 </div>
 </section>
 
+<!-- WORKS INDEX -->
+<section id="index" aria-hidden="true">
+  <div class="index-head"><h2>Selected Works</h2><button class="index-close" id="indexClose" aria-label="Close">&times;</button></div>
+  <div class="grid" id="grid"></div>
+</section>
+
 <script>
-const INTERVAL_MS=4500;
-const MOBILE_QUERY='(max-width:700px)';
+/* ================= EDIT HERE ================= */
+const INTERVAL_MS = 4500;                 // time each work is held (ms)
+const MOBILE_QUERY = '(max-width:700px)'; // below this width → cross-fade instead of cube
+const CV_PDF = 'files/joseph-hughes-cv-2026.pdf'; // '' to hide; keeps "available on request"
+
+// Works. Each: src (image), title, year, materials, dimensions, context.
+// Add youtube:'<link>' to make one an autoplay film.
 const WORKS=[
-{desktopSrc:'images/hairy-styles-desktop-v2.jpg',mobileSrc:'images/hairy-styles-mobile-v2.jpg',title:'Hairy Styles',year:'2026',materials:'Photographic self-portrait series and modular artist publication',dimensions:'In development',context:'Identity, hair loss, transformation and reader authorship'},
-{desktopSrc:'images/solo-desktop.jpg',mobileSrc:'images/solo-mobile.jpg',title:'It’s The Thought That Counts…',year:'2023',materials:'Solo exhibition: sculpture, assemblage, installation and film',dimensions:'',context:'De Bouwput, Amsterdam'},
-{desktopSrc:'images/wip-desktop.jpg',mobileSrc:'images/wip-mobile.jpg',title:'Work in Progress',year:'2023',materials:'Borrowed and reclaimed road signs, fixings',dimensions:'Dimensions variable',context:'Sculptural assemblage and public intervention'},
-{desktopSrc:'images/pearls-desktop.jpg',mobileSrc:'images/pearls-mobile.jpg',title:'String of Pearls',year:'2025',materials:'Coloured bead chains, aluminium housing and fixings',dimensions:'Installation variable',context:'Kissambushed, Gallery van Fanny Freytag, Amsterdam'},
-{desktopSrc:'images/basketballs-desktop.jpg',mobileSrc:'images/basketballs-mobile.jpg',title:'A Mimicry to Memory®',year:'2021',materials:'Terracotta basketball casts',dimensions:'Life-size, installation variable',context:'Sculpture and installation'},
-{desktopSrc:'images/slinky-desktop.jpg',mobileSrc:'images/slinky-mobile.jpg',title:'Perpetual Progression',year:'2014',materials:'Video installation, CRT monitors and flight cases',dimensions:'Looped video',context:'A rainbow Slinky descends an escalator indefinitely'},
-{desktopSrc:'images/paris-desktop.jpg',mobileSrc:'images/paris-mobile.jpg',title:'Paris in the Spring',year:'2023',materials:'Engraved marble and printed triangular units',dimensions:'Variable installation',context:'A familiar reading error made permanent'},
-{desktopSrc:'images/biotoop-desktop.jpg',mobileSrc:'images/biotoop-mobile.jpg',title:'Untitled (Tree / Plane)',year:'2022',materials:'Painted timber panel and existing tree',dimensions:'Site-specific',context:'Biotoop, Amstelveen'},
-{desktopSrc:'images/pickets-desktop.jpg',mobileSrc:'images/pickets-mobile.jpg',title:'Picket Boards',year:'2016',materials:'Printed placards',dimensions:'Series',context:'Art Rotterdam, with Studio Folkert de Jong and 75B'},
-{desktopSrc:'images/mirror-desktop.jpg',mobileSrc:'images/mirror-mobile.jpg',title:'7 Years Good Luck',year:'',materials:'Altered circular mirror',dimensions:'Dimensions TBC',context:'Studio installation'},
-{desktopSrc:'images/teapot-desktop.jpg',mobileSrc:'images/teapot-mobile.jpg',title:'Utah Teapot',year:'',materials:'Porcelain teapot and Sugru',dimensions:'Dimensions TBC',context:'Altered object'},
-{desktopSrc:'images/kissambushed-desktop.jpg',mobileSrc:'images/kissambushed-mobile.jpg',title:'Kissambushed',year:'2025',materials:'Group exhibition',dimensions:'',context:'Gallery van Fanny Freytag, Amsterdam'}
+{src:'images/w01-m.jpg',title:'Obelisk of Obsolescence',year:'2026',materials:'',dimensions:'',context:''},
+{src:'images/w02-m.jpg',title:'What are Words Worth?',year:'2025',materials:'',dimensions:'',context:''},
+{desktopSrc:'images/w03-d.jpg',mobileSrc:'images/string-of-pearls.gif',src:'images/w03-d.jpg',title:'String of Pearls',year:'2025',materials:'',dimensions:'',context:''},
+{src:'images/w04-m.jpg',title:'Paris in the Spring #5',year:'2025',materials:'',dimensions:'',context:''},
+{desktopSrc:'images/w05-d.jpg',mobileSrc:'images/w05-m.jpg',src:'images/w05-m.jpg',title:'Drive by #2',year:'2025',materials:'',dimensions:'',context:''},
+{desktopSrc:'images/w06-d.jpg',mobileSrc:'images/w06-m.jpg',src:'images/w06-m.jpg',title:'7 Years Good Luck',year:'2024',materials:'',dimensions:'',context:''},
+{desktopSrc:'images/w07-d.jpg',mobileSrc:'images/breaking-the-mould.gif',src:'images/w07-d.jpg',title:'Breaking the Mould',year:'2024',materials:'',dimensions:'',context:''},
+{desktopSrc:'images/w08-d.jpg',mobileSrc:'images/w08-m.jpg',src:'images/w08-m.jpg',title:'It’s The Thought That Counts…',year:'2023',materials:'',dimensions:'',context:''},
+{src:'images/w09-m.jpg',title:'',year:'',materials:'',dimensions:'',context:''},
+{src:'images/w10-m.jpg',title:'Stroopwafel Ping-Pong Bat',year:'2023',materials:'',dimensions:'',context:''},
+{desktopSrc:'images/w11-d.jpg',mobileSrc:'images/w11-m.jpg',src:'images/w11-m.jpg',title:'Paris in the Spring',year:'2023',materials:'',dimensions:'',context:''},
+{src:'images/w12-m.jpg',title:'Exhibition Guide',year:'2023',materials:'',dimensions:'',context:''},
+{desktopSrc:'images/w13-d.jpg',mobileSrc:'images/w13-m.jpg',src:'images/w13-m.jpg',title:'Work in Progress #2',year:'2023',materials:'',dimensions:'',context:''},
+{desktopSrc:'images/w14-d.jpg',mobileSrc:'images/w14-m.jpg',src:'images/w14-m.jpg',title:'Hairy Styles',year:'2026',materials:'',dimensions:'',context:''},
+{src:'images/w15-m.jpg',title:'Hairy Styles',year:'2026',materials:'',dimensions:'',context:''},
+{src:'images/w16-m.jpg',title:'Hairy Styles',year:'2026',materials:'',dimensions:'',context:''},
+{desktopSrc:'images/w17-d.jpg',mobileSrc:'images/w17-m.jpg',src:'images/w17-m.jpg',title:'Perpetual Progression',year:'2014',materials:'',dimensions:'',context:'',youtube:'https://youtu.be/uryrIjjKNkw?si=byBqwyStE77oRWpL'},
+{desktopSrc:'images/w18-d.jpg',mobileSrc:'images/w18-m.jpg',src:'images/w18-m.jpg',title:'',year:'',materials:'',dimensions:'',context:''},
+{desktopSrc:'images/w19-d.jpg',mobileSrc:'images/w19-m.jpg',src:'images/w19-m.jpg',title:'A Mimicry to Memory®',year:'2021',materials:'',dimensions:'',context:''},
+{desktopSrc:'images/w20-d.jpg',mobileSrc:'images/w20-m.jpg',src:'images/w20-m.jpg',title:'Work in Progress',year:'2023',materials:'',dimensions:'',context:''},
+{src:'images/w21-m.jpg',fit:'contain',title:'',year:'',materials:'',dimensions:'',context:''},
+{src:'images/w22-m.jpg',fit:'contain',title:'',year:'',materials:'',dimensions:'',context:''},
+{src:'images/w23-m.jpg',fit:'contain',title:'',year:'',materials:'',dimensions:'',context:''},
+{src:'images/w24-m.jpg',fit:'contain',title:'',year:'',materials:'',dimensions:'',context:''},
+{src:'images/w25-m.jpg',fit:'contain',title:'',year:'',materials:'',dimensions:'',context:''},
+{src:'images/w26-m.jpg',fit:'contain',title:'',year:'',materials:'',dimensions:'',context:''},
+{src:'images/w27-m.jpg',fit:'contain',title:'',year:'',materials:'',dimensions:'',context:''},
+{src:'images/w28-m.jpg',fit:'contain',title:'',year:'',materials:'',dimensions:'',context:''},
+{src:'images/w29-m.jpg',title:'',year:'',materials:'',dimensions:'',context:''}
 ];
+/* ============ end edit / engine below ============ */
 
 const scene=document.getElementById('scene'),cube=document.getElementById('cube');
 const faces=[document.getElementById('faceA'),document.getElementById('faceB')];
-document.getElementById('cTot').textContent=String(WORKS.length).padStart(2,'0');
-let depth=innerWidth/2,rot=0,cur=0,idx=0,timer=null,paused=false;
+const videoLayer=document.getElementById('videoLayer');
+// Order: shuffle on each load. Set SHUFFLE=false for fixed order.
+// Per-work flags: skip:true (hide entirely) · desktopOnly / mobileOnly (device).
+const SHUFFLE=true;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+let ORDER = SHUFFLE ? shuffle(WORKS.slice()) : WORKS.slice();
+// don't open on the video (it takes over the screen) — move it out of first slot
+if(ORDER.length>1 && ORDER[0].youtube){const k=ORDER.findIndex((w,i)=>i>0&&!w.youtube);if(k>0){const v=ORDER.splice(0,1)[0];ORDER.splice(k,0,v);}}
+function activeWorks(){const mob=matchMedia(MOBILE_QUERY).matches;return ORDER.filter(w=>!w.skip&&!(w.desktopOnly&&mob)&&!(w.mobileOnly&&!mob));}
+let LIST=activeWorks();
+function updateTotal(){document.getElementById('cTot').textContent=String(LIST.length).padStart(2,'0')}
+updateTotal();
+
+let depth=innerWidth/2,rot=0,cur=0,idx=0,timer=null,paused=false,videoActive=false;
+let mode = matchMedia(MOBILE_QUERY).matches ? 'fade' : 'cube';
+
 const isMobile=()=>matchMedia(MOBILE_QUERY).matches;
-const srcFor=w=>isMobile()?(w.mobileSrc||w.desktopSrc):w.desktopSrc;
+const srcFor=w=>{if(w.desktopSrc&&w.mobileSrc)return isMobile()?w.mobileSrc:w.desktopSrc;return w.src;};
 const esc=s=>String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const ytId=u=>{if(!u)return'';if(/^[\w-]{11}$/.test(u))return u;const m=String(u).match(/(?:v=|\/embed\/|youtu\.be\/|\/shorts\/)([\w-]{11})/);return m?m[1]:'';};
+
 function paintFace(face,w){
- const img=face.querySelector('img'),ph=face.querySelector('.placeholder'),cap=face.querySelector('.caption');
- ph.style.display='flex';ph.textContent=w.title||'Image';img.style.opacity=0;
- img.onload=()=>{img.style.opacity=1;ph.style.display='none'};img.onerror=()=>{ph.style.display='flex'};
- img.alt=w.title||'';img.src=srcFor(w);
- let x=`<div class="title">${esc(w.title)}${w.year?` <span class="year">${esc(w.year)}</span>`:''}</div>`;
- if(w.materials||w.dimensions)x+=`<div class="meta">${esc(w.materials)}${w.materials&&w.dimensions?'<br>':''}<span>${esc(w.dimensions)}</span></div>`;
- if(w.context)x+=`<div class="context">${esc(w.context)}</div>`;
- cap.innerHTML=x;cap.classList.remove('show');requestAnimationFrame(()=>requestAnimationFrame(()=>cap.classList.add('show')));
+  const img=face.querySelector('img'),ph=face.querySelector('.placeholder'),cap=face.querySelector('.caption');
+  img.style.objectPosition=w.objectPosition||'center';img.style.objectFit=w.fit||'cover';
+  ph.style.display='flex';ph.textContent=w.title||'Image';img.style.opacity=0;
+  img.onload=()=>{img.style.opacity=1;ph.style.display='none'};img.onerror=()=>{ph.style.display='flex'};
+  img.alt=w.title||'';img.src=srcFor(w);
+  let x=`<div class="title">${esc(w.title)}${w.year?` <span class="year">${esc(w.year)}</span>`:''}</div>`;
+  if(w.materials||w.dimensions)x+=`<div class="meta">${esc(w.materials)}${w.materials&&w.dimensions?'<br>':''}<span>${esc(w.dimensions)}</span></div>`;
+  if(w.context)x+=`<div class="context">${esc(w.context)}</div>`;
+  cap.innerHTML=x;cap.classList.remove('show');requestAnimationFrame(()=>requestAnimationFrame(()=>cap.classList.add('show')));
 }
 function placeFace(f,d){f.style.transform=`rotateY(${d}deg) translateZ(${depth}px)`}
 function applyCube(a){cube.style.transition=a?'':'none';cube.style.transform=`translateZ(${-depth}px) rotateY(${rot}deg)`;if(!a){void cube.offsetWidth;cube.style.transition=''}}
 function updateCounter(){document.getElementById('cNow').textContent=String(idx+1).padStart(2,'0')}
-function init(){depth=innerWidth/2;idx=0;rot=0;cur=0;paintFace(faces[0],WORKS[0]);placeFace(faces[0],0);paintFace(faces[1],WORKS[1]);placeFace(faces[1],90);applyCube(false);updateCounter()}
-function go(dir){const incoming=1-cur;idx=(idx+dir+WORKS.length)%WORKS.length;paintFace(faces[incoming],WORKS[idx]);const nextRot=rot-90*dir;faces[incoming].style.transform=`rotateY(${-nextRot}deg) translateZ(${depth}px)`;faces[cur].querySelector('.caption').classList.remove('show');void cube.offsetWidth;rot=nextRot;applyCube(true);cur=incoming;updateCounter()}
-function schedule(){clearInterval(timer);if(!paused)timer=setInterval(()=>go(1),INTERVAL_MS)}
-scene.addEventListener('click',e=>{go(e.clientX<innerWidth/2?-1:1);schedule()});
-document.addEventListener('keydown',e=>{if(document.getElementById('about').classList.contains('open'))return;if(e.code==='Space'){e.preventDefault();paused=!paused;schedule()}if(e.code==='ArrowRight'){go(1);schedule()}if(e.code==='ArrowLeft'){go(-1);schedule()}});
-scene.addEventListener('mouseenter',()=>clearInterval(timer));scene.addEventListener('mouseleave',schedule);
-addEventListener('resize',()=>{depth=innerWidth/2;placeFace(faces[cur],-rot);placeFace(faces[1-cur],-rot+90);paintFace(faces[cur],WORKS[idx]);applyCube(false)});
+
+function showVideo(raw){
+  const id=ytId(raw);if(!id){hideVideo();return}
+  videoActive=true;clearInterval(timer);
+  videoLayer.innerHTML=`<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&controls=1&rel=0&playsinline=1&modestbranding=1" title="${esc(LIST[idx].title)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+  videoLayer.classList.add('show');
+  document.getElementById('videoTitle').innerHTML=`${esc(LIST[idx].title)}${LIST[idx].year?` — ${esc(LIST[idx].year)}`:''}`;
+  scene.classList.add('playing');
+  faces[cur].querySelector('.caption').classList.remove('show');
+}
+function hideVideo(){
+  videoActive=false;
+  if(videoLayer.classList.contains('show')){videoLayer.classList.remove('show');videoLayer.innerHTML=''}
+  scene.classList.remove('playing');
+}
+function updateMedia(){
+  const w=LIST[idx];
+  if(w&&w.youtube&&ytId(w.youtube))showVideo(w.youtube);else hideVideo();
+}
+
+function init(start){
+  idx=start||0;rot=0;cur=0;depth=innerWidth/2;
+  scene.classList.toggle('fademode',mode==='fade');
+  faces.forEach(f=>{f.style.opacity='';f.style.zIndex='';f.style.transform=''});
+  cube.style.transition='';cube.style.transform='';
+  paintFace(faces[0],LIST[idx]);
+  paintFace(faces[1],WORKS[(idx+1)%LIST.length]);
+  if(mode==='fade'){
+    cube.style.transform='none';
+    faces[0].style.transform='none';faces[1].style.transform='none';
+    faces[0].style.opacity='1';faces[0].style.zIndex='2';
+    faces[1].style.opacity='0';faces[1].style.zIndex='1';
+  }else{
+    placeFace(faces[0],0);placeFace(faces[1],90);applyCube(false);
+  }
+  updateCounter();updateMedia();
+}
+function goCube(dir){
+  const incoming=1-cur;idx=(idx+dir+LIST.length)%LIST.length;
+  paintFace(faces[incoming],LIST[idx]);
+  const nextRot=rot-90*dir;
+  faces[incoming].style.transform=`rotateY(${-nextRot}deg) translateZ(${depth}px)`;
+  faces[cur].querySelector('.caption').classList.remove('show');
+  void cube.offsetWidth;rot=nextRot;applyCube(true);cur=incoming;
+  updateCounter();updateMedia();
+}
+function goFade(dir){
+  const incoming=1-cur;idx=(idx+dir+LIST.length)%LIST.length;
+  paintFace(faces[incoming],LIST[idx]);
+  faces[incoming].style.transform='none';faces[incoming].style.opacity='0';faces[incoming].style.zIndex='2';
+  faces[cur].style.zIndex='1';faces[cur].querySelector('.caption').classList.remove('show');
+  void faces[incoming].offsetWidth;faces[incoming].style.opacity='1';cur=incoming;
+  updateCounter();updateMedia();
+}
+function go(dir){hideVideo();mode==='fade'?goFade(dir):goCube(dir)}
+function goTo(n){
+  hideVideo();if(n===idx){updateMedia();return}idx=n;
+  if(mode==='fade'){
+    const incoming=1-cur;paintFace(faces[incoming],LIST[idx]);
+    faces[incoming].style.transform='none';faces[incoming].style.opacity='0';faces[incoming].style.zIndex='2';
+    faces[cur].style.zIndex='1';void faces[incoming].offsetWidth;faces[incoming].style.opacity='1';cur=incoming;
+  }else{paintFace(faces[cur],LIST[idx])}
+  updateCounter();updateMedia();
+}
+function schedule(){clearInterval(timer);if(!paused&&!videoActive)timer=setInterval(()=>go(1),INTERVAL_MS)}
+
+scene.addEventListener('click',e=>{
+  if(videoActive)return;
+  if(e.target.closest('.site-name,.topbar-right,#videoBar'))return;
+  go(e.clientX<innerWidth/2?-1:1);schedule();
+});
+document.addEventListener('keydown',e=>{
+  if(about.classList.contains('open')||indexEl.classList.contains('open')){
+    if(e.code==='Escape'){about.classList.contains('open')?closeAbout():closeIndex()}
+    return;
+  }
+  if(e.code==='ArrowRight'){go(1);schedule()}
+  else if(e.code==='ArrowLeft'){go(-1);schedule()}
+  else if(e.code==='Space'&&!videoActive){e.preventDefault();paused=!paused;schedule()}
+});
+scene.addEventListener('mouseenter',()=>{if(!videoActive)clearInterval(timer)});
+scene.addEventListener('mouseleave',()=>{if(!videoActive)schedule()});
+document.getElementById('videoNext').addEventListener('click',()=>{go(1);schedule()});
+document.getElementById('videoClose').addEventListener('click',()=>{hideVideo();schedule()});
+
+let rz;
+addEventListener('resize',()=>{
+  clearTimeout(rz);
+  rz=setTimeout(()=>{
+    const m=isMobile()?'fade':'cube';
+    if(m!==mode){mode=m;LIST=activeWorks();updateTotal();buildGrid();init(Math.min(idx,LIST.length-1));schedule()}
+    else if(mode==='cube'&&!videoActive){depth=innerWidth/2;placeFace(faces[cur],-rot);placeFace(faces[1-cur],-rot+90);applyCube(false)}
+  },150);
+});
+
 const about=document.getElementById('about');
-function openAbout(){clearInterval(timer);about.classList.add('open');about.setAttribute('aria-hidden','false')}
+function openAbout(){hideVideo();clearInterval(timer);closeIndex();about.classList.add('open');about.setAttribute('aria-hidden','false')}
 function closeAbout(){about.classList.remove('open');about.setAttribute('aria-hidden','true');schedule()}
 document.getElementById('siteName').addEventListener('click',e=>{e.stopPropagation();openAbout()});
+document.getElementById('siteName').addEventListener('keydown',e=>{if(e.code==='Enter'||e.code==='Space'){e.preventDefault();openAbout()}});
 document.getElementById('aboutClose').addEventListener('click',closeAbout);
 about.addEventListener('click',e=>{if(e.target===about)closeAbout()});
-document.addEventListener('keydown',e=>{if(e.code==='Escape'&&about.classList.contains('open'))closeAbout()});
-init();schedule();
+
+if(CV_PDF){
+  const note=document.getElementById('cvNote');if(note)note.remove();
+  const a=document.createElement('a');a.href=CV_PDF;a.textContent='Download CV (PDF)';a.setAttribute('download','');a.setAttribute('target','_blank');
+  document.getElementById('aboutContact').appendChild(a);
+}
+
+const indexEl=document.getElementById('index'),grid=document.getElementById('grid');
+function buildGrid(){
+  grid.innerHTML='';
+  LIST.forEach((w,i)=>{
+    const cell=document.createElement('button');cell.className='cell';
+    cell.innerHTML=`<span class="thumb"><img loading="lazy" src="${esc(w.thumb||w.src)}" alt="${esc(w.title)}">${(w.youtube&&ytId(w.youtube))?'<span class="pill">▶ Film</span>':''}</span><span class="lbl">${esc(w.title)}${w.year?` · ${esc(w.year)}`:''}</span>`;
+    cell.addEventListener('click',()=>{goTo(i);closeIndex();if(!videoActive)schedule()});
+    grid.appendChild(cell);
+  });
+}
+buildGrid();
+function openIndex(){hideVideo();clearInterval(timer);closeAbout();indexEl.classList.add('open');indexEl.setAttribute('aria-hidden','false')}
+function closeIndex(){indexEl.classList.remove('open');indexEl.setAttribute('aria-hidden','true');if(!videoActive)schedule()}
+document.getElementById('indexBtn').addEventListener('click',e=>{e.stopPropagation();openIndex()});
+document.getElementById('indexClose').addEventListener('click',closeIndex);
+indexEl.addEventListener('click',e=>{if(e.target===indexEl)closeIndex()});
+
+init(0);schedule();
 </script>
 </body>
 </html>
