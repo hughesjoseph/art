@@ -19,7 +19,7 @@ html,body{height:100%;background:#0a0a0a;overflow:hidden;font-family:"Helvetica 
 #scene.fademode #cube{transform:none!important;transition:none!important}
 #scene.fademode .face{transition:opacity 1.05s ease}
 .scrim{position:absolute;left:0;right:0;bottom:0;height:42%;z-index:4;pointer-events:none;background:linear-gradient(to top,rgba(0,0,0,.6),rgba(0,0,0,.16) 55%,transparent);transition:opacity .3s}
-.caption{display:none;position:absolute;left:clamp(20px,4vw,60px);bottom:clamp(20px,5vh,60px);max-width:min(600px,84vw);color:var(--ink);z-index:5;pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.75),0 2px 16px rgba(0,0,0,.7),0 0 1px #000;opacity:0;transform:translateY(10px);transition:opacity .5s ease .18s,transform .5s ease .18s}
+.caption{position:absolute;left:clamp(20px,4vw,60px);bottom:clamp(20px,5vh,60px);max-width:min(600px,84vw);color:var(--ink);z-index:5;pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.75),0 2px 16px rgba(0,0,0,.7),0 0 1px #000;opacity:0;transform:translateY(10px);transition:opacity .5s ease .18s,transform .5s ease .18s}
 .caption.show{opacity:1;transform:none}
 .caption .title{font-style:italic;font-weight:400;font-size:clamp(21px,3.2vw,38px);line-height:1.06}
 .caption .title .year{font-style:normal;opacity:.85}
@@ -35,7 +35,8 @@ html,body{height:100%;background:#0a0a0a;overflow:hidden;font-family:"Helvetica 
 #scene:hover .hint{opacity:.5}
 #videoLayer{position:absolute;inset:0;z-index:8;display:none;background:#000}
 #videoLayer.show{display:block}
-#videoLayer iframe{width:100%;height:100%;border:0;display:block}
+#videoLayer iframe{width:100%;height:100%;border:0;display:block;pointer-events:none}
+.vidlink{position:absolute;inset:0;z-index:2;display:block;cursor:pointer}
 #videoBar{position:absolute;top:0;left:0;right:0;z-index:9;display:none;align-items:center;justify-content:space-between;gap:16px;padding:clamp(14px,3vh,22px) clamp(18px,4vw,40px);background:linear-gradient(to bottom,rgba(0,0,0,.65),transparent)}
 #scene.playing #videoBar{display:flex}
 #scene.playing .site-name,#scene.playing .topbar-right,#scene.playing .counter,#scene.playing .hint,#scene.playing .scrim,#scene.playing .caption{opacity:0;pointer-events:none}
@@ -102,7 +103,7 @@ html,body{height:100%;background:#0a0a0a;overflow:hidden;font-family:"Helvetica 
 <section id="about" aria-hidden="true">
 <button class="about-close" id="aboutClose" aria-label="Close">&times;</button>
 <div class="about-inner">
-  <div class="about-portrait"><img src="images/portrait.jpg" alt="Joseph Hughes"></div>
+  <div class="about-portrait"><img src="images/portrait-jh.jpg" alt="Joseph Hughes"></div>
   <div class="about-text">
     <h2>Joseph Hughes</h2>
     <div class="born">Born 1986, London. Lives and works in Amsterdam.</div>
@@ -269,17 +270,13 @@ function updateCounter(){document.getElementById('cNow').textContent=String(idx+
 
 function showVideo(raw){
   const id=ytId(raw);if(!id){hideVideo();return}
-  videoActive=true;clearInterval(timer);
-  videoLayer.innerHTML=`<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&controls=1&rel=0&playsinline=1&modestbranding=1" title="${esc(LIST[idx].title)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+  videoActive=true;
+  videoLayer.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${id}&rel=0&playsinline=1&modestbranding=1&disablekb=1&fs=0&iv_load_policy=3" allow="autoplay; encrypted-media; picture-in-picture" frameborder="0" tabindex="-1"></iframe><a class="vidlink" href="${raw}" target="_blank" rel="noopener" aria-label="Watch on YouTube"></a>`;
   videoLayer.classList.add('show');
-  document.getElementById('videoTitle').innerHTML=`${esc(LIST[idx].title)}${LIST[idx].year?` — ${esc(LIST[idx].year)}`:''}`;
-  scene.classList.add('playing');
-  faces[cur].querySelector('.caption').classList.remove('show');
 }
 function hideVideo(){
   videoActive=false;
   if(videoLayer.classList.contains('show')){videoLayer.classList.remove('show');videoLayer.innerHTML=''}
-  scene.classList.remove('playing');
 }
 function updateMedia(){
   const w=LIST[idx];
@@ -330,7 +327,7 @@ function goTo(n){
   }else{paintFace(faces[cur],LIST[idx])}
   updateCounter();updateMedia();
 }
-function schedule(){clearInterval(timer);if(!paused&&!videoActive)timer=setInterval(()=>go(1),INTERVAL_MS)}
+function schedule(){clearInterval(timer);if(!paused)timer=setInterval(()=>go(1),INTERVAL_MS)}
 
 scene.addEventListener('click',e=>{
   if(videoActive)return;
