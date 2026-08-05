@@ -36,7 +36,10 @@ html,body{height:100%;background:#0a0a0a;overflow:hidden;font-family:"Helvetica 
 #videoLayer{position:absolute;inset:0;z-index:8;display:none;background:#000}
 #videoLayer.show{display:block}
 #videoLayer iframe{width:100%;height:100%;border:0;display:block;pointer-events:none}
-.vidlink{position:absolute;inset:0;z-index:2;display:block;cursor:pointer}
+#playBtn{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:6;display:none;align-items:center;justify-content:center;width:clamp(66px,8vw,94px);height:clamp(66px,8vw,94px);border-radius:50%;background:rgba(0,0,0,.42);border:2px solid rgba(255,255,255,.9);color:#fff;cursor:pointer;transition:transform .2s,background .2s}
+#playBtn.show{display:flex}
+#playBtn:hover{background:rgba(0,0,0,.66);transform:translate(-50%,-50%) scale(1.06)}
+#playBtn svg{width:42%;height:42%;margin-left:8%}
 #videoBar{position:absolute;top:0;left:0;right:0;z-index:9;display:none;align-items:center;justify-content:space-between;gap:16px;padding:clamp(14px,3vh,22px) clamp(18px,4vw,40px);background:linear-gradient(to bottom,rgba(0,0,0,.65),transparent)}
 #scene.playing #videoBar{display:flex}
 #scene.playing .site-name,#scene.playing .topbar-right,#scene.playing .counter,#scene.playing .hint,#scene.playing .scrim,#scene.playing .caption{opacity:0;pointer-events:none}
@@ -86,8 +89,7 @@ html,body{height:100%;background:#0a0a0a;overflow:hidden;font-family:"Helvetica 
     <div class="face" id="faceA"><img alt=""><div class="placeholder"></div><div class="caption"></div></div>
     <div class="face" id="faceB"><img alt=""><div class="placeholder"></div><div class="caption"></div></div>
   </div>
-  <div id="videoLayer"></div>
-  <div id="videoBar"><span class="vt" id="videoTitle"></span><span class="vc"><button id="videoNext">Next ›</button><button id="videoClose">Close ✕</button></span></div>
+  <button id="playBtn" aria-label="Watch film on YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
   <div class="site-name" id="siteName" role="button" tabindex="0" title="About the artist">Joseph Hughes</div>
   <div class="topbar-right">
     <button class="iconbtn" id="indexBtn" aria-label="Works index" title="Works index">
@@ -159,7 +161,7 @@ const MWORKS=[
 {src:'images/m02.jpg',title:'What are Words Worth?',year:'2025',materials:'Two Abri posters',dimensions:'1189 × 1750 mm',context:''},
 {src:'images/m03.jpg',title:'String of Pearls',year:'2025',materials:'180 CMYK anal beads',dimensions:'180 × variable cm',context:''},
 {src:'images/m04.jpg',title:'Paris in the Spring #5',year:'2025',materials:'Marble, gold leaf',dimensions:'50 × 50 × 50 cm',context:''},
-{src:'images/m05.jpg',title:'Drive by #2',year:'2025',materials:'Photography, magnetic decals',dimensions:'Variable',context:''},
+{src:'images/m05.jpg',title:'Drive by #2',year:'2025',materials:'Photography, magnetic decals',dimensions:'Variable',context:'Magnetic bullet-hole decals on a Ferrari 296 GTS'},
 {src:'images/m06.jpg',title:'7 Years Good Luck',year:'2024',materials:'IKEA LINDBYN mirror, tape, glue',dimensions:'80 cm diameter',context:''},
 {desktopSrc:'images/m07.jpg',mobileSrc:'images/breaking-the-mould.gif',src:'images/m07.jpg',title:'Breaking the Mould',year:'2024',materials:'Photography, video',dimensions:'Dimensions variable',context:''},
 {src:'images/m08.jpg',title:'',year:'',materials:'',dimensions:'',context:''},
@@ -199,7 +201,7 @@ const MWORKS=[
 {desktopSrc:'images/m42.jpg',mobileSrc:'images/string-of-pearls.gif',src:'images/m42.jpg',title:'String of Pearls',year:'2025',materials:'180 CMYK anal beads',dimensions:'180 × variable cm',context:'Gallery van Fanny Freytag, Amsterdam'}
 ];
 const DWORKS=[
-{src:'images/d01.jpg',title:'Drive by #2',year:'2025',materials:'Photography, magnetic decals',dimensions:'Variable',context:''},
+{src:'images/d01.jpg',title:'Drive by #2',year:'2025',materials:'Photography, magnetic decals',dimensions:'Variable',context:'Magnetic bullet-hole decals on a Ferrari 296 GTS'},
 {src:'images/d02.jpg',title:'Work in Progress #2',year:'2023',materials:'20 aluminium roadwork signs, 180 bolts',dimensions:'1.5 × 1.5 × 1.5 m',context:''},
 {src:'images/d03.jpg',title:'Breaking the Mould',year:'2024',materials:'Photography, video',dimensions:'Dimensions variable',context:'Triptych'},
 {src:'images/d04.jpg',title:'Drive by #1',year:'2023',materials:'Photography: Ieva Griknyte',dimensions:'Variable',context:'Detail — It’s The Thought That Counts…'},
@@ -220,7 +222,7 @@ const DWORKS=[
 {src:'images/d19.jpg',title:'7 Years Good Luck',year:'2024',materials:'IKEA LINDBYN mirror, tape, glue',dimensions:'80 cm diameter',context:''},
 {src:'images/d20.jpg',title:'String of Pearls',year:'2025',materials:'180 CMYK anal beads',dimensions:'180 × variable cm',context:'Second installation view, Kissambushed, Gallery van Fanny Freytag'},
 {src:'images/d21.jpg',title:'Fire Flags',year:'2014',materials:'Nylon, digital print (115 g/m²)',dimensions:'150 × 100 cm',context:'Presented at Intersections, Art Rotterdam, 2017'},
-{src:'images/d22.jpg',title:'Drive by #2',year:'2025',materials:'Photography, magnetic decals',dimensions:'Variable',context:'Ferrari 296 GTS'},
+{src:'images/d22.jpg',title:'Drive by #2',year:'2025',materials:'Photography, magnetic decals',dimensions:'Variable',context:'Magnetic bullet-hole decals on a Ferrari 296 GTS'},
 {src:'images/d23.jpg',title:'It’s The Thought That Counts…',year:'2023',materials:'Solo exhibition',dimensions:'',context:'Installation view, De Bouwput, Amsterdam'},
 {src:'images/d24.jpg',title:'',year:'',materials:'',dimensions:'',context:'',skip:true},
 {src:'images/d25.jpg',title:'String of Pearls',year:'2025',materials:'180 CMYK anal beads',dimensions:'180 × variable cm',context:'Second installation view, Kissambushed, Gallery van Fanny Freytag'}
@@ -230,7 +232,7 @@ const DWORKS=[
 
 const scene=document.getElementById('scene'),cube=document.getElementById('cube');
 const faces=[document.getElementById('faceA'),document.getElementById('faceB')];
-const videoLayer=document.getElementById('videoLayer');
+const playBtn=document.getElementById('playBtn');
 // Order: shuffle on each load. Set SHUFFLE=false for fixed order.
 // Per-work flags: skip:true (hide entirely) · desktopOnly / mobileOnly (device).
 const SHUFFLE=true;
@@ -270,15 +272,10 @@ function applyCube(a){cube.style.transition=a?'':'none';cube.style.transform=`tr
 function updateCounter(){document.getElementById('cNow').textContent=String(idx+1).padStart(2,'0')}
 
 function showVideo(raw){
-  const id=ytId(raw);if(!id){hideVideo();return}
-  videoActive=true;
-  videoLayer.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${id}&rel=0&playsinline=1&modestbranding=1&disablekb=1&fs=0&iv_load_policy=3" allow="autoplay; encrypted-media; picture-in-picture" frameborder="0" tabindex="-1"></iframe><a class="vidlink" href="${raw}" target="_blank" rel="noopener" aria-label="Watch on YouTube"></a>`;
-  videoLayer.classList.add('show');
+  if(!ytId(raw)){hideVideo();return}
+  playBtn.dataset.url=raw;playBtn.classList.add('show');
 }
-function hideVideo(){
-  videoActive=false;
-  if(videoLayer.classList.contains('show')){videoLayer.classList.remove('show');videoLayer.innerHTML=''}
-}
+function hideVideo(){playBtn.classList.remove('show')}
 function updateMedia(){
   const w=LIST[idx];
   if(w&&w.youtube&&ytId(w.youtube))showVideo(w.youtube);else hideVideo();
@@ -331,10 +328,10 @@ function goTo(n){
 function schedule(){clearInterval(timer);if(!paused)timer=setInterval(()=>go(1),INTERVAL_MS)}
 
 scene.addEventListener('click',e=>{
-  if(videoActive)return;
-  if(e.target.closest('.site-name,.topbar-right,#videoBar'))return;
+  if(e.target.closest('.site-name,.topbar-right,#playBtn'))return;
   go(e.clientX<innerWidth/2?-1:1);schedule();
 });
+playBtn.addEventListener('click',e=>{e.stopPropagation();const u=playBtn.dataset.url;if(u)window.open(u,'_blank','noopener')});
 document.addEventListener('keydown',e=>{
   if(about.classList.contains('open')||indexEl.classList.contains('open')){
     if(e.code==='Escape'){about.classList.contains('open')?closeAbout():closeIndex()}
@@ -344,10 +341,8 @@ document.addEventListener('keydown',e=>{
   else if(e.code==='ArrowLeft'){go(-1);schedule()}
   else if(e.code==='Space'&&!videoActive){e.preventDefault();paused=!paused;schedule()}
 });
-scene.addEventListener('mouseenter',()=>{if(!videoActive)clearInterval(timer)});
-scene.addEventListener('mouseleave',()=>{if(!videoActive)schedule()});
-document.getElementById('videoNext').addEventListener('click',()=>{go(1);schedule()});
-document.getElementById('videoClose').addEventListener('click',()=>{hideVideo();schedule()});
+scene.addEventListener('mouseenter',()=>{clearInterval(timer)});
+scene.addEventListener('mouseleave',()=>{schedule()});
 
 let rz;
 addEventListener('resize',()=>{
